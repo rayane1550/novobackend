@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especial da Casa - Pizzaria Fantástica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* * NOVA PALETA DE CORES
+         * --fundo-escuro: Um cinza carvão sofisticado.
+         * --vermelho-tomate: Um vermelho vibrante para destaques.
+         * --creme-texto: Um branco suave para leitura confortável.
+         * --dourado-preco: Um toque de luxo para o preço.
+        */
+        :root {
+            --fundo-escuro: #2c2c2c;
+            --vermelho-tomate: #e74c3c;
+            --creme-texto: #f4f4f4;
+            --cinza-suave: #555;
+            --dourado-preco: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1e1e1e;
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23333" fill-opacity="0.2"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            color: var(--creme-texto);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .pizza-card {
+            background-color: var(--fundo-escuro);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            animation: slideUpFadeIn 0.8s ease-out;
+        }
+
+        @keyframes slideUpFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pizza-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+        }
+
+        .pizza-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .pizza-details {
+            padding: 30px;
+        }
+
+        .pizza-details h1 {
+            color: var(--vermelho-tomate);
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        /* NOVO NOME DA PIZZA */
+        .pizza-details h2 {
+            font-family: 'Lobster', cursive;
+            font-size: 42px;
+            margin: 10px 0;
+            color: var(--creme-texto);
+        }
+
+        .description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #ccc;
+            margin-bottom: 25px;
+        }
+        
+        .ingredients-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dourado-preco);
+        }
+
+        .ingredients-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .ingredients-list li {
+            background-color: var(--cinza-suave);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .price {
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--dourado-preco);
+            margin-bottom: 25px;
+        }
+
+        .price span {
+            font-size: 18px;
+            vertical-align: super;
+        }
+        
+        .cta-button {
+            background-color: var(--vermelho-tomate);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            background-color: #c0392b; /* Um vermelho mais escuro */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="pizza-card">
+        <div class="pizza-image">
+            <img src="https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200" alt="Pizza gourmet deliciosa">
+        </div>
+        <div class="pizza-details">
+            <h1>✨ Especial da Casa ✨</h1>
+            <h2>Suprema de Sumaré</h2>
+            <p class="description">
+                Uma combinação irresistível de queijo mussarela premium derretido sobre um molho de tomate artesanal, coberto com peperoni picante, cogumelos frescos e azeitonas pretas.
+            </p>
+            
+            <h3 class="ingredients-title">Ingredientes Principais</h3>
+            <ul class="ingredients-list">
+                <li>Peperoni</li>
+                <li>Mussarela Premium</li>
+                <li>Cogumelos Frescos</li>
+                <li>Azeitonas</li>
+            </ul>
+
+            <div class="price">
+                <span>R$</span>59,90
+            </div>
+
+            <button class="cta-button">
+                Peça Agora!
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>

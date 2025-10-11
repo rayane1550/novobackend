@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossas Super Promoções!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fundo: #FDF6E3; /* Um bege claro e quente */
+            --card-fundo: #FFFFFF;
+            --vermelho-destaque: #E53935;
+            --verde-botao: #43A047;
+            --texto-escuro: #424242;
+            --sombra: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--fundo);
+            color: var(--texto-escuro);
+            padding: 50px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .main-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 3.5rem;
+            color: var(--vermelho-destaque);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: #757575;
+        }
+
+        .promo-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .promo-card {
+            background: var(--card-fundo);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px var(--sombra);
+            width: 320px;
+            padding: 25px;
+            text-align: center;
+            border-top: 5px solid var(--vermelho-destaque);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0; /* Começa invisível para a animação */
+        }
+
+        /* Animação de entrada escalonada para cada cartão */
+        .promo-card:nth-child(1) { animation-delay: 0.2s; }
+        .promo-card:nth-child(2) { animation-delay: 0.4s; }
+        .promo-card:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .promo-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .promo-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .promo-card h2 {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.8rem;
+            color: var(--texto-escuro);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .promo-card p {
+            font-size: 1rem;
+            line-height: 1.5;
+            min-height: 70px; /* Garante alinhamento visual */
+            margin-bottom: 20px;
+        }
+
+        .promo-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--vermelho-destaque);
+            margin-bottom: 25px;
+        }
+        
+        .promo-price span {
+            font-size: 2.5rem;
+        }
+
+        .promo-button {
+            background-color: var(--verde-botao);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .promo-button:hover {
+            background-color: #388E3C; /* Verde mais escuro */
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+    <h1 class="main-title">Ofertas Imperdíveis</h1>
+    <p class="subtitle">A felicidade acabou de ficar mais barata!</p>
+
+    <div class="promo-container">
+        <div class="promo-card">
+            <div class="promo-icon">🍕🥤</div>
+            <h2>Combo do Finde</h2>
+            <p>1 Pizza Grande de Calabresa + 1 Guaraná de 2L. Perfeito para maratonar sua série favorita!</p>
+            <div class="promo-price">
+                R$ <span>54</span>,90
+            </div>
+            <button class="promo-button">Aproveitar!</button>
+        </div>
+
+        <div class="promo-card">
+            <div class="promo-icon">✌️🍕</div>
+            <h2>Terça em Dobro</h2>
+            <p>Compre uma pizza de Mussarela ou Marguerita e leve a segunda de graça. Isso mesmo, na faixa!</p>
+            <div class="promo-price">
+                Pague 1, Leve 2
+            </div>
+            <button class="promo-button">Aproveitar!</button>
+        </div>
+
+        <div class="promo-card">
+            <div class="promo-icon">👨‍👩‍👧‍👦</div>
+            <h2>Festa em Família</h2>
+            <p>2 Pizzas Grandes (sabores selecionados) + 1 Pizza Doce pequena (Chocolate) + 1 refri 2L.</p>
+            <div class="promo-price">
+                R$ <span>99</span>,90
+            </div>
+            <button class="promo-button">Aproveitar!</button>
+        </div>
+    </div>
+</body>
+</html>
