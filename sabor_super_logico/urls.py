@@ -20,3 +20,16 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+#fazer comentarios
+"""
+URL configuration for sabor_super_logico project.
+"""
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('restaurante_api.urls')),
+]
+
