@@ -14,22 +14,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-]
-
-#fazer comentarios
 """
 URL configuration for sabor_super_logico project.
 """
-from django.contrib import admin
-from django.urls import path, include
+from django.contrib import admin#importando o módulo admin para gerenciar o site administrativo do django
+from django.urls import path, include #importando include para incluir URLs de outras aplicações para o django
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('restaurante_api.urls')),
+    path('', include('restaurante_api.urls')), #incluindo as URLs da aplicação restaurante_api
 ]
 

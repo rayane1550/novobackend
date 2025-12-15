@@ -1,93 +1,75 @@
-from rest_framework import serializers
-from .models import pagamentos
+from rest_framework import serializers #from vai importar o serializers do rest framework 
+from .models import (
+    Cliente, Funcionario, Mesa, Categoria, Produto, 
+    Ingrediente, Pedido, ItemPedido, 
+    Pagamento, Fornecedor, Compra #importando todos os modelos criados
+)
 
-class pagamentosSerializer (serializers.ModelSerializer):
+class ClienteSerializer(serializers.ModelSerializer): #criar sempre as classes "ClienteSerializer" ou outras que vai herdar de serializers.ModelSerializer
     class Meta:
-        model = pagamentos
+        model = Cliente #inclui todos os campos do modelo cliente na API
         fields = '__all__'
         read_only_fields = ['id']
 
 
-
-
-from rest_framework import serializers
-from .models import (
-    Clientes, Funcionarios, Mesas, Categorias, Produtos, 
-    Ingredientes, ProdutosIngredientes, Pedidos, ItensPedido, 
-    Pagamentos, Fornecedores, Compras
-)
-
-
-class ClientesSerializer(serializers.ModelSerializer):
+class FuncionarioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Clientes
+        model = Funcionario
         fields = '__all__'
 
 
-class FuncionariosSerializer(serializers.ModelSerializer):
+class MesaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Funcionarios
+        model = Mesa
         fields = '__all__'
 
 
-class MesasSerializer(serializers.ModelSerializer):
+class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Mesas
+        model = Categoria
         fields = '__all__'
 
 
-class CategoriasSerializer(serializers.ModelSerializer):
+class IngredienteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Categorias
+        model = Ingrediente
+        fields = '__all__'
+        
+
+class ProdutoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Produto
+        fields = '__all__'
+
+class FornecedorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fornecedor
         fields = '__all__'
 
 
-class IngredientesSerializer(serializers.ModelSerializer):
+class CompraSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Ingredientes
+        model = Compra
         fields = '__all__'
 
 
-class ProdutosIngredientesSerializer(serializers.ModelSerializer):
+class ItemPedidoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProdutosIngredientes
+        model = ItemPedido
         fields = '__all__'
 
 
-class ProdutosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Produtos
-        fields = '__all__'
+class PedidoSerializer(serializers.ModelSerializer):
 
-
-class FornecedoresSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Fornecedores
-        fields = '__all__'
-
-
-class ComprasSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Compras
-        fields = '__all__'
-
-
-class ItensPedidoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ItensPedido
-        fields = '__all__'
-
-
-class PedidosSerializer(serializers.ModelSerializer):
-    itens = ItensPedidoSerializer(many=True, read_only=True, source='itenspedido_set')
+    itens = ItemPedidoSerializer(many=True, read_only=True) 
     
     class Meta:
-        model = Pedidos
+        model = Pedido
         fields = '__all__'
 
 
-class PagamentosSerializer(serializers.ModelSerializer):
+class PagamentoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Pagamentos
+        model = Pagamento
         fields = '__all__'
-

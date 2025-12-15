@@ -1,505 +1,467 @@
-from django.shortcuts import render #importando a tabela pagamentos
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from .models import pagamentos
-from .serializers import pagamentosSerializer
+from django.shortcuts import render #importar o render do django para renderizar que é uma função que vai processar as requisições HTTP
+from rest_framework.decorators import api_view #from vai importar o decorador api_view do rest framework para definir os métodos HTTP permitidos em cada view
+from rest_framework.response import Response #from vai importar a classe Response do rest framework para retornar respostas HTTP
+from rest_framework import status #vai importar o status do rest framework para usar os códigos de status HTTP nas respostas
+from .models import ( #importando todos os modelos criados
+    Mesa, Funcionario, Pedido, Pagamento, Ingrediente,
+    Cliente, Categoria, Fornecedor, Compra, Produto, ItemPedido
+)
+from .serializers import ( #importando todos os serializers criados
+    MesaSerializer, FuncionarioSerializer, PedidoSerializer, PagamentoSerializer,
+    IngredienteSerializer, ClienteSerializer, CategoriaSerializer,
+    FornecedorSerializer, CompraSerializer, ProdutoSerializer, ItemPedidoSerializer
+)
 
-@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-def lista_pagamentos(request):
+
+@api_view(['GET', 'POST']) #Vai definir os métodos HTTP permitidos (GET e POST)
+def criar_listar_pagamentos(request):
+    if request.method == 'GET':#O metodo que vai listar todos os pagamentos
+        pagamentos = Pagamento.objects.all() #pegar todos os pagamentos do banco de dados e listar para o usuario
+        serializer = PagamentoSerializer(pagamentos, many=True)#serializar os dados dos pagamentos para o formato JSON
+        return Response(serializer.data) #retornar a resposta com os dados serializados
+
+    elif request.method == 'POST':#O metodo que vai criar um novo pagamento
+        serializer = PagamentoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)#vai dar a resposta com os dados do pagamento criado e o status 201 (criado)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)#vai dar a resposta com os erros de validação e o status 400 (requisição inválida)
+
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])# Vai definir os métodos HTTP permitidos (GET, PUT, PATCH e DELETE)
+def detalhe_pagamento(request, id): 
+    try:
+        pagamento = Pagamento.objects.get(pk=id)
+    except Pagamento.DoesNotExist: 
+        return Response({"detail": "Pagamento não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
     if request.method == 'GET':
-        pagamentos= pagamentos.objects.all()
-        serializer = pagamentosSerializer(pagamentos, many=True)
+        serializer = PagamentoSerializer(pagamento)
         return Response(serializer.data)
+
+    elif request.method == 'PUT': #Atualizar um pagamento existente
+        serializer = PagamentoSerializer(pagamento, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == 'PUT':
-        try:
-            pagamento = pagamentos.objects.get(id=request.data['id'])
-            serializer = pagamentosSerializer(pagamento, data=request.data)
-
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except pagamentos.DoesNotExist:
-            return Response({"detail": "Pagamento não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    elif request.method == 'PATCH':#Atualizar parcialmente um pagamento existente
+        serializer = PagamentoSerializer(pagamento, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Pagamento atualizado com sucesso", "data": serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == 'PATCH':
-        try:
-            pagamento = pagamentos.objects.get(id=request.data['id'])
-            serializer = pagamentosSerializer(pagamento, data=request.data, partial=True)
-
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except pagamentos.DoesNotExist:
-            return Response({"detail": "Pagamento não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    elif request.method == 'DELETE': #Deletar um pagamento existente
+        pagamento.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT) 
     
-    elif request.method == 'DELETE':
-        try:
-            pagamento = pagamentos.objects.get(id=request.data['id'])
-            pagamento.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
 
-        except pagamentos.Doe
-
-
-
-
-
-
-
-
-
-
-
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from .models import (
-    Clientes, Funcionarios, Mesas, Categorias, Produtos,
-    Ingredientes, ProdutosIngredientes, Pedidos, ItensPedido,
-    Pagamentos, Fornecedores, Compras
-)
-from .serializers import (
-    ClientesSerializer, FuncionariosSerializer, MesasSerializer,
-    CategoriasSerializer, ProdutosSerializer, IngredientesSerializer,
-    ProdutosIngredientesSerializer, PedidosSerializer, ItensPedidoSerializer,
-    PagamentosSerializer, FornecedoresSerializer, ComprasSerializer
-)
-
-
-# ==================== CLIENTES ====================
 @api_view(['GET', 'POST'])
-def lista_clientes(request):
+def criar_listar_cliente(request):
     if request.method == 'GET':
-        clientes = Clientes.objects.all()
-        serializer = ClientesSerializer(clientes, many=True)
+        clientes = Cliente.objects.all()
+        serializer = ClienteSerializer(clientes, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = ClientesSerializer(data=request.data)
+        serializer = ClienteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_cliente(request, pk):
     try:
-        cliente = Clientes.objects.get(pk=pk)
-    except Clientes.DoesNotExist:
+        cliente = Cliente.objects.get(pk=pk)
+    except Cliente.DoesNotExist:
         return Response({"detail": "Cliente não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = ClientesSerializer(cliente)
+        serializer = ClienteSerializer(cliente)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = ClientesSerializer(cliente, data=request.data)
+        serializer = ClienteSerializer(cliente, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = ClienteSerializer(cliente, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         cliente.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ==================== FUNCIONARIOS ====================
 @api_view(['GET', 'POST'])
-def lista_funcionarios(request):
+def criar_listar_funcionarios(request):
     if request.method == 'GET':
-        funcionarios = Funcionarios.objects.all()
-        serializer = FuncionariosSerializer(funcionarios, many=True)
+        funcionarios = Funcionario.objects.all()
+        serializer = FuncionarioSerializer(funcionarios, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = FuncionariosSerializer(data=request.data)
+        serializer = FuncionarioSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_funcionario(request, pk):
     try:
-        funcionario = Funcionarios.objects.get(pk=pk)
-    except Funcionarios.DoesNotExist:
+        funcionario = Funcionario.objects.get(pk=pk)
+    except Funcionario.DoesNotExist:
         return Response({"detail": "Funcionário não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = FuncionariosSerializer(funcionario)
+        serializer = FuncionarioSerializer(funcionario)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = FuncionariosSerializer(funcionario, data=request.data)
+        serializer = FuncionarioSerializer(funcionario, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = FuncionarioSerializer(funcionario, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         funcionario.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ==================== MESAS ====================
 @api_view(['GET', 'POST'])
-def lista_mesas(request):
+def criar_listar_mesas(request):
     if request.method == 'GET':
-        mesas = Mesas.objects.all()
-        serializer = MesasSerializer(mesas, many=True)
+        mesas = Mesa.objects.all()
+        serializer = MesaSerializer(mesas, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = MesasSerializer(data=request.data)
+        serializer = MesaSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_mesa(request, pk):
     try:
-        mesa = Mesas.objects.get(pk=pk)
-    except Mesas.DoesNotExist:
+        mesa = Mesa.objects.get(pk=pk)
+    except Mesa.DoesNotExist:
         return Response({"detail": "Mesa não encontrada"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = MesasSerializer(mesa)
+        serializer = MesaSerializer(mesa)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = MesasSerializer(mesa, data=request.data)
+        serializer = MesaSerializer(mesa, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = MesaSerializer(mesa, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         mesa.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ==================== CATEGORIAS ====================
 @api_view(['GET', 'POST'])
-def lista_categorias(request):
+def criar_listar_categorias(request):
     if request.method == 'GET':
-        categorias = Categorias.objects.all()
-        serializer = CategoriasSerializer(categorias, many=True)
+        categorias = Categoria.objects.all()
+        serializer = CategoriaSerializer(categorias, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = CategoriasSerializer(data=request.data)
+        serializer = CategoriaSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_categoria(request, pk):
     try:
-        categoria = Categorias.objects.get(pk=pk)
-    except Categorias.DoesNotExist:
+        categoria = Categoria.objects.get(pk=pk)
+    except Categoria.DoesNotExist:
         return Response({"detail": "Categoria não encontrada"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = CategoriasSerializer(categoria)
+        serializer = CategoriaSerializer(categoria)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = CategoriasSerializer(categoria, data=request.data)
+        serializer = CategoriaSerializer(categoria, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = CategoriaSerializer(categoria, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         categoria.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ==================== PRODUTOS ====================
 @api_view(['GET', 'POST'])
-def lista_produtos(request):
+def criar_listar_produto(request):
     if request.method == 'GET':
-        produtos = Produtos.objects.all()
-        serializer = ProdutosSerializer(produtos, many=True)
+        produtos = Produto.objects.all()
+        serializer = ProdutoSerializer(produtos, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = ProdutosSerializer(data=request.data)
+        serializer = ProdutoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_produto(request, pk):
     try:
-        produto = Produtos.objects.get(pk=pk)
-    except Produtos.DoesNotExist:
+        produto = Produto.objects.get(pk=pk)
+    except Produto.DoesNotExist:
         return Response({"detail": "Produto não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = ProdutosSerializer(produto)
+        serializer = ProdutoSerializer(produto)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = ProdutosSerializer(produto, data=request.data)
+        serializer = ProdutoSerializer(produto, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = ProdutoSerializer(produto, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         produto.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ==================== INGREDIENTES ====================
 @api_view(['GET', 'POST'])
-def lista_ingredientes(request):
+def criar_listar_ingredientes(request):
     if request.method == 'GET':
-        ingredientes = Ingredientes.objects.all()
-        serializer = IngredientesSerializer(ingredientes, many=True)
+        ingredientes = Ingrediente.objects.all()
+        serializer = IngredienteSerializer(ingredientes, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = IngredientesSerializer(data=request.data)
+        serializer = IngredienteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_ingrediente(request, pk):
     try:
-        ingrediente = Ingredientes.objects.get(pk=pk)
-    except Ingredientes.DoesNotExist:
+        ingrediente = Ingrediente.objects.get(pk=pk)
+    except Ingrediente.DoesNotExist:
         return Response({"detail": "Ingrediente não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = IngredientesSerializer(ingrediente)
+        serializer = IngredienteSerializer(ingrediente)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = IngredientesSerializer(ingrediente, data=request.data)
+        serializer = IngredienteSerializer(ingrediente, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = IngredienteSerializer(ingrediente, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         ingrediente.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ==================== PEDIDOS ====================
 @api_view(['GET', 'POST'])
-def lista_pedidos(request):
+def criar_listar_pedidos(request):
     if request.method == 'GET':
-        pedidos = Pedidos.objects.all()
-        serializer = PedidosSerializer(pedidos, many=True)
+        pedidos = Pedido.objects.all()
+        serializer = PedidoSerializer(pedidos, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = PedidosSerializer(data=request.data)
+        serializer = PedidoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_pedido(request, pk):
     try:
-        pedido = Pedidos.objects.get(pk=pk)
-    except Pedidos.DoesNotExist:
+        pedido = Pedido.objects.get(pk=pk)
+    except Pedido.DoesNotExist:
         return Response({"detail": "Pedido não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = PedidosSerializer(pedido)
+        serializer = PedidoSerializer(pedido)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = PedidosSerializer(pedido, data=request.data)
+        serializer = PedidoSerializer(pedido, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = PedidoSerializer(pedido, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         pedido.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ==================== ITENS DE PEDIDO ====================
 @api_view(['GET', 'POST'])
-def lista_itenspedido(request):
+def criar_listar_itempedido(request):
     if request.method == 'GET':
-        itens = ItensPedido.objects.all()
-        serializer = ItensPedidoSerializer(itens, many=True)
+        itens = ItemPedido.objects.all()
+        serializer = ItemPedidoSerializer(itens, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = ItensPedidoSerializer(data=request.data)
+        serializer = ItemPedidoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_itempedido(request, pk):
     try:
-        item = ItensPedido.objects.get(pk=pk)
-    except ItensPedido.DoesNotExist:
+        item = ItemPedido.objects.get(pk=pk)
+    except ItemPedido.DoesNotExist:
         return Response({"detail": "Item de pedido não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = ItensPedidoSerializer(item)
+        serializer = ItemPedidoSerializer(item)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = ItensPedidoSerializer(item, data=request.data)
+        serializer = ItemPedidoSerializer(item, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = ItemPedidoSerializer(item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ==================== PAGAMENTOS ====================
 @api_view(['GET', 'POST'])
-def lista_pagamentos(request):
+def criar_listar_fornecedores(request):
     if request.method == 'GET':
-        pagamentos = Pagamentos.objects.all()
-        serializer = PagamentosSerializer(pagamentos, many=True)
+        fornecedores = Fornecedor.objects.all()
+        serializer = FornecedorSerializer(fornecedores, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = PagamentosSerializer(data=request.data)
+        serializer = FornecedorSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def detalhe_pagamento(request, pk):
-    try:
-        pagamento = Pagamentos.objects.get(pk=pk)
-    except Pagamentos.DoesNotExist:
-        return Response({"detail": "Pagamento não encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
-    if request.method == 'GET':
-        serializer = PagamentosSerializer(pagamento)
-        return Response(serializer.data)
-    
-    elif request.method == 'PUT':
-        serializer = PagamentosSerializer(pagamento, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    elif request.method == 'DELETE':
-        pagamento.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# ==================== FORNECEDORES ====================
-@api_view(['GET', 'POST'])
-def lista_fornecedores(request):
-    if request.method == 'GET':
-        fornecedores = Fornecedores.objects.all()
-        serializer = FornecedoresSerializer(fornecedores, many=True)
-        return Response(serializer.data)
-    
-    elif request.method == 'POST':
-        serializer = FornecedoresSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_fornecedor(request, pk):
     try:
-        fornecedor = Fornecedores.objects.get(pk=pk)
-    except Fornecedores.DoesNotExist:
+        fornecedor = Fornecedor.objects.get(pk=pk)
+    except Fornecedor.DoesNotExist:
         return Response({"detail": "Fornecedor não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = FornecedoresSerializer(fornecedor)
+        serializer = FornecedorSerializer(fornecedor)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = FornecedoresSerializer(fornecedor, data=request.data)
+        serializer = FornecedorSerializer(fornecedor, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = FornecedorSerializer(fornecedor, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         fornecedor.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-# ==================== COMPRAS ====================
 @api_view(['GET', 'POST'])
-def lista_compras(request):
+def criar_listar_compras(request):
     if request.method == 'GET':
-        compras = Compras.objects.all()
-        serializer = ComprasSerializer(compras, many=True)
+        compras = Compra.objects.all()
+        serializer = CompraSerializer(compras, many=True)
         return Response(serializer.data)
-    
     elif request.method == 'POST':
-        serializer = ComprasSerializer(data=request.data)
+        serializer = CompraSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def detalhe_compra(request, pk):
     try:
-        compra = Compras.objects.get(pk=pk)
-    except Compras.DoesNotExist:
+        compra = Compra.objects.get(pk=pk)
+    except Compra.DoesNotExist:
         return Response({"detail": "Compra não encontrada"}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
-        serializer = ComprasSerializer(compra)
+        serializer = CompraSerializer(compra)
         return Response(serializer.data)
-    
     elif request.method == 'PUT':
-        serializer = ComprasSerializer(compra, data=request.data)
+        serializer = CompraSerializer(compra, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    elif request.method == 'PATCH':
+        serializer = CompraSerializer(compra, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         compra.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# Create your views here.

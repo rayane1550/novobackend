@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'restaurante_api',
+    'rest_framework', #adicionar o Django REST Framework
+    'restaurante_api', #adicionar a aplicação restaurante_api
 ]
 
 MIDDLEWARE = [
